@@ -74,6 +74,12 @@ type Verification struct {
 	// The list of signed header fields.
 	HeaderKeys []string
 
+	// DKIM selector, added by MAF
+	Selector string
+
+	// DKIM signature, added by MAF
+	Signature string
+
 	// The time that this signature was created. If unknown, it's set to zero.
 	Time time.Time
 	// The expiration time. If the signature doesn't expire, it's set to zero.
@@ -222,6 +228,12 @@ func verify(h header, r io.Reader, sigField, sigValue string, options *VerifyOpt
 	}
 
 	verif.Domain = stripWhitespace(params["d"])
+
+	// Added by MAF
+	verif.Selector = stripWhitespace(params["s"])
+
+	// Added by MAF
+	verif.Signature = stripWhitespace(params["b"])
 
 	for _, tag := range requiredTags {
 		if _, ok := params[tag]; !ok {
