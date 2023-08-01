@@ -61,6 +61,9 @@ type SignOptions struct {
 	// See RFC 6376 section 5.4.1 for recommended header fields.
 	HeaderKeys []string
 
+	// Skip X- headers when signing.
+	SkipXHeaders bool
+
 	// The expiration time. A zero value means no expiration.
 	Expiration time.Time
 
@@ -209,6 +212,9 @@ func NewSigner(options *SignOptions) (*Signer, error) {
 		} else {
 			for _, kv := range h {
 				k, _ := parseHeaderField(kv)
+				if options.SkipXHeaders && (strings.HasPrefix(k, "X-") || strings.HasPrefix(k, "x-")) {
+					continue
+				}
 				headerKeys = append(headerKeys, k)
 			}
 		}
